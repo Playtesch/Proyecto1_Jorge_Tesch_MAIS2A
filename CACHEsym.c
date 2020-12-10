@@ -64,6 +64,12 @@ int main(void) {
         }
     }
 
+    printf("------------------------------------------------------------------------\n");
+    printf("Tiempo Global: %.0f\nNumero de Accesos: %d\nNumero de Fallos: %d\nTiempo Medio de Acceso: %.2f\nTexto: ", tiempoglobal, numaccesos, numfallos, tiempoglobal / numaccesos);
+    for (i = 0; i < numaccesos; i++) {
+        printf("%c", texto[i]);
+    }
+    printf("\n------------------------------------------------------------------------\n");
 	return 0; 
 }
 
