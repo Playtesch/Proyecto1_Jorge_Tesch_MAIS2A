@@ -16,6 +16,7 @@ int main(void) {
     unsigned char RAM[1024];
     unsigned char RAMOrdenada[128][8];
 	T_LINEA_CACHE cache[4];
+    FILE* ficheroAccesosDeMemoria;
     char valorAccesoDeMemoria[5];
     short int direccion, bloque, etiqueta, linea, palabra;
 	int i, j;
@@ -30,9 +31,14 @@ int main(void) {
 	leerFicheroRAM(RAM);
     dividirRAM(RAM, RAMOrdenada);
 
-    valorAccesoDeMemoria = "02E4";
-    datosDireccionDeMemoria(valorAccesoDeMemoria, &direccion, &bloque, &etiqueta, &linea, &palabra);
-  
+    if ((ficheroAccesosDeMemoria = fopen("accesos_memoria.txt", "r")) == NULL) {
+        printf("No existe el fichero de Accesos de Memoria\n");
+        exit(-1);
+    }
+
+    while ((fread(valorAccesoDeMemoria, 5, 1, ficheroAccesosDeMemoria)) != NULL) {
+        datosDireccionDeMemoria(valorAccesoDeMemoria, &direccion, &bloque, &etiqueta, &linea, &palabra);
+    }
 
 	return 0; 
 }
