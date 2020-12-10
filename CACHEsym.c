@@ -12,6 +12,8 @@ void leerFicheroRAM(unsigned char RAM[]);
 void dividirRAM(unsigned char RAM[], unsigned char RAMOrdenada[][8]);
 void datosDireccionDeMemoria(char direccionHex[], short int *direccion, short int* bloque, short int* etiqueta, short int* linea, short int* palabra);
 void traduccionBinario(char direccionHex[], char direccionBinario[]);
+void aciertoCache(T_LINEA_CACHE cache[], short int direccion, short int bloque, short int etiqueta, short int linea, short int palabra, float* tiempo, int numaccesos);
+void falloCache(unsigned char RAM[][8], T_LINEA_CACHE cache[], short int direccion, short int bloque, short int etiqueta, short int linea, short int palabra, float* tiempo, int* numfallos);
 int main(void) {
     unsigned char RAM[1024];
     unsigned char RAMOrdenada[128][8];
@@ -21,6 +23,7 @@ int main(void) {
     short int direccion, bloque, etiqueta, linea, palabra;
     int numaccesos = 0;
 	float tiempoglobal = 0;
+	int numfallos = 0;
     int acierto = 0;
 	int i, j;
 
@@ -47,9 +50,11 @@ int main(void) {
 
         while (acierto == 0) {
             if (cache[linea].ETQ == etiqueta) {
+                aciertoCache(cache, direccion, bloque, etiqueta, linea, palabra, &tiempoglobal, texto, numaccesos);
                 acierto = 1;
             }
             else {
+                falloCache(RAMOrdenada, cache, direccion, bloque, etiqueta, linea, palabra, &tiempoglobal, &numfallos);
             }
         }
     }
@@ -164,3 +169,30 @@ void traduccionBinario(char direccionHex[], char direccionBinario[]) {
         }
     }
 }
+
+
+
+void aciertoCache(T_LINEA_CACHE cache[], short int direccion, short int bloque, short int etiqueta, short int linea, short int palabra, float* tiempo, int numaccesos) {
+
+    printf("T: %.0f, Acierto de CACHE, ADDR %04X ETQ %X linea %02X palabra %02X DATO %02X\n", *tiempo, direccion, etiqueta, linea, palabra, cache[linea].Datos[7-palabra]);
+
+    *tiempo += 1;
+}
+
+
+void falloCache(unsigned char RAM[][8], T_LINEA_CACHE cache[], short int direccion, short int bloque, short int etiqueta, short int linea, short int palabra, float* tiempo, int* numfallos) {
+    int i;
+
+    *numfallos += 1;
+
+    printf("T: %.0f, Fallo de CACHE %d, ADDR %04X ETQ %X linea %02X palabra %02X bloque %02X\n", *tiempo, *numfallos, direccion, etiqueta, linea, palabra, bloque);
+    printf("Cargando el bloque %02X en la linea %02X\n", bloque, linea);
+
+    *tiempo += 10;
+
+    cache[linea].ETQ = etiqueta;
+    for (i = 0; i < 8; i++) {
+        cache[linea].Datos[i] = RAM[bloque][7 - i];
+    }
+}
+
