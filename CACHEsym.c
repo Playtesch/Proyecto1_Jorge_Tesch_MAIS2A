@@ -14,6 +14,7 @@ void datosDireccionDeMemoria(char direccionHex[], short int *direccion, short in
 void traduccionBinario(char direccionHex[], char direccionBinario[]);
 void aciertoCache(T_LINEA_CACHE cache[], short int direccion, short int bloque, short int etiqueta, short int linea, short int palabra, float* tiempo, int numaccesos);
 void falloCache(unsigned char RAM[][8], T_LINEA_CACHE cache[], short int direccion, short int bloque, short int etiqueta, short int linea, short int palabra, float* tiempo, int* numfallos);
+void imprimirCache(T_LINEA_CACHE cache[]);
 int main(void) {
     unsigned char RAM[1024];
     unsigned char RAMOrdenada[128][8];
@@ -50,7 +51,7 @@ int main(void) {
 
         while (acierto == 0) {
             if (cache[linea].ETQ == etiqueta) {
-                aciertoCache(cache, direccion, bloque, etiqueta, linea, palabra, &tiempoglobal, texto, numaccesos);
+                aciertoCache(cache, direccion, bloque, etiqueta, linea, palabra, &tiempoglobal, numaccesos);
                 acierto = 1;
             }
             else {
@@ -176,6 +177,8 @@ void aciertoCache(T_LINEA_CACHE cache[], short int direccion, short int bloque, 
 
     printf("T: %.0f, Acierto de CACHE, ADDR %04X ETQ %X linea %02X palabra %02X DATO %02X\n", *tiempo, direccion, etiqueta, linea, palabra, cache[linea].Datos[7-palabra]);
 
+    imprimirCache(cache);
+
     *tiempo += 1;
 }
 
@@ -196,3 +199,15 @@ void falloCache(unsigned char RAM[][8], T_LINEA_CACHE cache[], short int direcci
     }
 }
 
+void imprimirCache(T_LINEA_CACHE cache[]) {
+    int i, j;
+
+    for (i = 0; i < 4; i++) {
+        printf("ETQ: %X\tDatos ", cache[i].ETQ);
+        for (j = 0; j < 8; j++) {
+            printf("%02X ", cache[i].Datos[j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
