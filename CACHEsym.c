@@ -19,6 +19,9 @@ int main(void) {
     FILE* ficheroAccesosDeMemoria;
     char valorAccesoDeMemoria[5];
     short int direccion, bloque, etiqueta, linea, palabra;
+    int numaccesos = 0;
+	float tiempoglobal = 0;
+    int acierto = 0;
 	int i, j;
 
 	for (i = 0; i < 4; i++) {
@@ -37,7 +40,18 @@ int main(void) {
     }
 
     while ((fread(valorAccesoDeMemoria, 5, 1, ficheroAccesosDeMemoria)) != NULL) {
+        acierto = 0;
+        numaccesos += 1;
+
         datosDireccionDeMemoria(valorAccesoDeMemoria, &direccion, &bloque, &etiqueta, &linea, &palabra);
+
+        while (acierto == 0) {
+            if (cache[linea].ETQ == etiqueta) {
+                acierto = 1;
+            }
+            else {
+            }
+        }
     }
 
 	return 0; 
