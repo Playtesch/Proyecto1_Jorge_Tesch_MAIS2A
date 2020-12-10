@@ -64,8 +64,33 @@ void dividirRAM(unsigned char RAM[], unsigned char RAMOrdenada[][8]) {
 void datosDireccionDeMemoria(char direccionHex[], short int *direccion, short int *bloque, short int *etiqueta, short int* linea, short int *palabra){
 	char direccionBinario[11];
     char valorBloque[8], valorEtiqueta[6], valorLinea[3], valorPalabra[4];
+    int i;
 
     traduccionBinario(direccionHex, direccionBinario);
+
+    for (i = 0; i < 5; i++) {
+        valorEtiqueta[i] = direccionBinario[i];
+    }
+    valorEtiqueta[5] = '\0';
+
+    for (i = 0; i < 2; i++) {
+        valorLinea[i] = direccionBinario[i + 5];
+    }
+    valorLinea[2] = '\0';
+
+    for (i = 0; i < 3; i++) {
+        valorPalabra[i] = direccionBinario[i + (7)];
+    }
+    valorPalabra[3] = '\0';
+
+    strcpy(valorBloque, valorEtiqueta);
+    strcat(valorBloque, valorLinea);
+
+    *direccion = (short int)strtol(direccionHex, NULL, 16);
+    *bloque = (short int)strtol(valorBloque, NULL, 2);
+    *etiqueta = (short int)strtol(valorEtiqueta, NULL, 2);
+    *linea = (short int)strtol(valorLinea, NULL, 2);
+    *palabra = (short int)strtol(valorPalabra, NULL, 2);
 }
 
 void traduccionBinario(char direccionHex[], char direccionBinario[]) {
