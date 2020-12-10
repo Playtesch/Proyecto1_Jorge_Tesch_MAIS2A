@@ -9,8 +9,10 @@ typedef struct {
 } T_LINEA_CACHE;
 
 void leerFicheroRAM(unsigned char RAM[]);
+void dividirRAM(unsigned char RAM[], unsigned char RAMOrdenada[][8]);
 int main(void) {
     unsigned char RAM[1024];
+    unsigned char RAMOrdenada[128][8];
 	T_LINEA_CACHE cache[4];
 	int i, j;
 
@@ -22,6 +24,7 @@ int main(void) {
 	}
 
 	leerFicheroRAM(RAM);
+    dividirRAM(RAM, RAMOrdenada);
  
 	return 0; 
 }
@@ -38,4 +41,14 @@ void leerFicheroRAM(unsigned char RAM[]) {
 
 	fclose(fichero);
 	return;
+}
+
+void dividirRAM(unsigned char RAM[], unsigned char RAMOrdenada[][8]) {
+    int i, j;
+
+    for (i = 0; i < 128; i++) {
+        for (j = 0; j < 8; j++) {
+            RAMOrdenada[i][j] = RAM[(i * 8) + j];
+        }
+    }
 }
