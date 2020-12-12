@@ -21,7 +21,7 @@ void leerFicheroRAM(unsigned char RAM[]);
 void dividirRAM(unsigned char RAM[], unsigned char RAMOrdenada[][DATOSCACHE]);
 void datosDireccionDeMemoria(char direccionHex[], short int *direccion, short int* bloque, short int* etiqueta, short int* linea, short int* palabra);
 void traduccionBinario(char direccionHex[], char direccionBinario[]);
-void aciertoCache(T_LINEA_CACHE cache[], short int direccion, short int bloque, short int etiqueta, short int linea, short int palabra, float* tiempo, char texto[], int numaccesos);
+void aciertoCache(T_LINEA_CACHE cache[], short int direccion, short int bloque, short int etiqueta, short int linea, short int palabra, float tiempo, char texto[], int numaccesos);
 void falloCache(unsigned char RAM[][DATOSCACHE], T_LINEA_CACHE cache[], short int direccion, short int bloque, short int etiqueta, short int linea, short int palabra, float* tiempo, int* numfallos);
 void imprimirCache(T_LINEA_CACHE cache[]);
 
@@ -62,6 +62,7 @@ int main(void) {
     while ((fread(valorAccesoDeMemoria, 5, 1, ficheroAccesosDeMemoria)) != NULL) {
         acierto = 0;
         numaccesos += 1;
+        tiempoglobal++;
 
         //Obtenemos el bloque, etiqueta, linea y palabra de la direccion de memoria leida.
         datosDireccionDeMemoria(valorAccesoDeMemoria, &direccion, &bloque, &etiqueta, &linea, &palabra);
@@ -70,7 +71,7 @@ int main(void) {
         while (acierto == 0) {
             if (cache[linea].ETQ == etiqueta) {
                 //Si las etiquetas coinciden llamamos a la funcion de acierto.
-                aciertoCache(cache, direccion, bloque, etiqueta, linea, palabra, &tiempoglobal, texto, numaccesos);
+                aciertoCache(cache, direccion, bloque, etiqueta, linea, palabra, tiempoglobal, texto, numaccesos);
                 acierto = 1;
             }
             else {
@@ -215,14 +216,13 @@ void traduccionBinario(char direccionHex[], char direccionBinario[]) {
 
 
 //Funcion para manejar un acierto de la cache.
-void aciertoCache(T_LINEA_CACHE cache[], short int direccion, short int bloque, short int etiqueta, short int linea, short int palabra, float* tiempo, char texto[], int numaccesos) {
+void aciertoCache(T_LINEA_CACHE cache[], short int direccion, short int bloque, short int etiqueta, short int linea, short int palabra, float tiempo, char texto[], int numaccesos) {
     //Imprimimos las datos del acierto.
-    printf("T: %.0f, Acierto de CACHE, ADDR %04X ETQ %X linea %02X palabra %02X DATO %02X\n", *tiempo, direccion, etiqueta, linea, palabra, cache[linea].Datos[7-palabra]);
+    printf("T: %.0f, Acierto de CACHE, ADDR %04X ETQ %X linea %02X palabra %02X DATO %02X\n", tiempo, direccion, etiqueta, linea, palabra, cache[linea].Datos[7-palabra]);
     //Imprimimos todos los elementos de la cache.
     imprimirCache(cache);
     //Guardamos el dato en la variable texto.
     texto[numaccesos - 1] = cache[linea].Datos[7 - palabra];
-    *tiempo += 1;
 }
 
 //Funcion para manejar un fallo de la cache.
